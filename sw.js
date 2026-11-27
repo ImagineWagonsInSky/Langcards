@@ -1,6 +1,6 @@
 // Service worker: caches the whole app (code + data) so it works offline.
 // VERSION is rewritten by scripts/stamp_version.py whenever any cached file changes.
-const VERSION = 'lc-8862f92e47';
+const VERSION = 'lc-6f310016f1';
 const ASSETS = [
   './',
   './index.html',

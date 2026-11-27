@@ -91,7 +91,7 @@ async function current(page) {
     const s = window.__lcSession && window.__lcSession();
     if (!s || s.pos >= s.items.length) return null;
     const it = s.items[s.pos];
-    return { ex: it.ex, practice: !!it.practice || s.kind === 'practice', kind: s.kind, card: { id: it.card.id, deck: it.card.deck, dir: it.card.dir, tgt: it.card.tgt, answers: it.card.answers, it: it.card.it, prompt: it.card.prompt } };
+    return { ex: it.ex, level: it.level, practice: !!it.practice || s.kind === 'practice', kind: s.kind, card: { id: it.card.id, deck: it.card.deck, dir: it.card.dir, tgt: it.card.tgt, answers: it.card.answers, it: it.card.it, prompt: it.card.prompt } };
   });
 }
 
@@ -354,6 +354,58 @@ async function playSession(page, { wrongEvery = 0, max = 80, name = 'session' } 
     const dirs = Object.keys((await readState(page)).cards).map((k) => k[0]);
     console.log('card id prefixes', [...new Set(dirs)].join(','));
     assert(dirs.includes('W') || dirs.includes('S'), 'Italian -> Spanish cards were introduced');
+
+    // 10b. placement test: pass levels 1-2, fail level 3 -> placed at level 3
+    await mutate(page, `st.settings.dir = 'ei';`);
+    await page.goto(BASE);
+    await page.waitForSelector('.level-card');
+    await shot(page, 'home-level-card');
+    await page.click('text=Take placement test');
+    await page.waitForSelector('.session');
+    for (let k = 0; k < 40 && !(await page.$('.summary')); k++) {
+      const c = await current(page);
+      await answer(page, c.level <= 2 ? 'right' : 'wrong');
+      if (k === 0) await shot(page, 'placement-q1');
+      await page.click('.ex-foot > .btn.block');
+    }
+    await page.waitForSelector('.summary');
+    await shot(page, 'placement-result');
+    assert((await page.textContent('.summary h2')).includes('Your level: 3'), `placed at 3: ${await page.textContent('.summary')}`);
+    const before = Object.keys((await readState(page)).cards).length;
+    await page.click('button:has-text("Start at Level 3")');
+    await page.waitForSelector('.app-name');
+    const stP = await readState(page);
+    assert(stP.settings.startLevel === 3, 'startLevel set to 3');
+    assert(Object.keys(stP.cards).length === before, 'placement does not schedule cards');
+    const lvls = await page.evaluate(async () => (await import('./assets/js/session.js')).nextNewCards(20).map((c) => c.lv));
+    assert(lvls.length && lvls.every((l) => l >= 3), `new cards from level >= 3: ${lvls}`);
+    assert((await page.textContent('.level-card h3')).includes('Starting at Level 3'), 'home shows starting level');
+    assert((await page.$$('.level-row.skipped')).length === 4, 'levels 1-2 marked skipped for words and sentences');
+    await shot(page, 'home-level3');
+    // quick level picker
+    await page.click('.level-chip:text-is("1")');
+    await page.waitForSelector('.app-name');
+    assert((await readState(page)).settings.startLevel === 1, 'level picker sets level 1');
+    // "I already know this" on a new card
+    await mutate(page, `st.settings.newPerDay = 80;`);
+    await page.goto(BASE);
+    await page.waitForSelector('.app-name');
+    await page.click('text=Start lesson');
+    await page.waitForSelector('.session');
+    let ci = await current(page);
+    for (let k = 0; k < 30 && ci && ci.ex !== 'intro'; k++) {
+      await answer(page);
+      if (await page.$('.feedback')) await page.click('.ex-foot > .btn.block');
+      ci = await current(page);
+    }
+    assert(ci && ci.ex === 'intro', 'reached a new-card intro');
+    await page.click('text=I already know this');
+    const known = (await readState(page)).cards[ci.card.id];
+    assert(known && known.i === 30, `known card scheduled in 30 days: ${JSON.stringify(known)}`);
+    const rest = await page.evaluate((id) => { const s = window.__lcSession(); return s.items.slice(s.pos).filter((x) => x.card.id === id).length; }, ci.card.id);
+    assert(rest === 0, 'its test question was removed from the lesson');
+    await page.click('.session-top .icon-btn');
+    await page.waitForSelector('.app-name');
 
     // 11. import the backup back
     await page.goto(`${BASE}#/settings`);

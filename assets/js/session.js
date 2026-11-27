@@ -4,7 +4,7 @@ import { h, clear, shuffle, weightedPick, icon } from './util.js';
 import { DB, deck, distractors, tileDistractors, examples, tatoebaUrl } from './data.js';
 import { checkAnswer, normalize, tileTokens, speechScore, answerVariants } from './text.js';
 import { schedule, AGAIN, HARD, GOOD, EASY, isDue, isLearned, previewInterval } from './srs.js';
-import { getState, settings, save, today, dayStats, recordExercise } from './store.js';
+import { getState, settings, updateSettings, save, today, dayStats, recordExercise } from './store.js';
 import { speak, stopSpeaking, ttsSupported, hasVoice, recognitionSupported, listenOnce } from './speech.js';
 import { play } from './sound.js';
 
@@ -128,10 +128,47 @@ export function practicePool(n = 10, filter = () => true) {
   return shuffle(pool);
 }
 
+// ------------------------------------------------------------------ placement test
+// Adaptive: 6 questions per level (2 multiple choice, 2 typed words, 2 sentence tiles).
+// 5 of 6 right moves you up a level; the test stops at the first level you don't pass.
+export const PLACEMENT_PER_LEVEL = 6;
+const PLACEMENT_PASS = 5;
+
+function placementBlock(level) {
+  const dir = settings().dir === 'ie' ? 'ie' : 'ei';
+  const words = shuffle(deck('word', dir).filter((c) => c.lv === level)).slice(0, 4);
+  const sents = shuffle(deck('sent', dir).filter((c) => c.lv === level && c.n >= 2 && c.n <= 12)).slice(0, 2);
+  const plan = [[words[0], 'mc'], [sents[0], 'tiles'], [words[1], 'type'], [words[2], 'mc'], [sents[1], 'tiles'], [words[3], 'type']];
+  return plan.filter(([c]) => c).map(([card, ex]) => ({ card, ex, level, practice: true }));
+}
+
+function placementAdvance() {
+  const lvl = session.level;
+  const block = session.items.filter((x) => x.level === lvl);
+  const right = block.filter((x) => x.ok).length;
+  const passed = block.length > 0 && right >= Math.min(PLACEMENT_PASS, block.length - 1);
+  session.blocks.push({ level: lvl, right, total: block.length, passed });
+  if (passed && lvl < 5) {
+    session.level = lvl + 1;
+    session.items.push(...placementBlock(lvl + 1));
+  }
+}
+
+/** Level to start new cards at after a placement test: one above the highest level passed. */
+export function placedLevel(blocks) {
+  let lvl = 1;
+  for (const b of blocks) {
+    if (!b.passed) break;
+    lvl = Math.min(5, b.level + 1);
+  }
+  return lvl;
+}
+
 // ------------------------------------------------------------------ session lifecycle
 /**
  * @param {object} o
  *   kind: 'learn' (SRS) | 'flash' (SRS, self-graded) | 'practice' (no schedule changes)
+ *         | 'placement' (adaptive level test, no schedule changes)
  *   ex:   force one exercise type (practice)
  *   cards: explicit cards (practice)
  */
@@ -140,11 +177,12 @@ export function startSession(o, exitCb) {
   let items;
   if (o.kind === 'learn') items = buildLearnItems();
   else if (o.kind === 'flash') items = shuffleWithin(dueCards()).slice(0, 30).map((card) => ({ card, ex: 'flash' }));
+  else if (o.kind === 'placement') items = placementBlock(1);
   else items = (o.cards || []).map((card) => ({ card, ex: o.ex || pickExercise(card), practice: true }));
   if (!items.length) return false;
   session = {
     kind: o.kind, title: o.title || '', items, pos: 0, answered: 0, correct: 0, newLearned: 0,
-    started: Date.now(), retries: new Map(), ex: o.ex,
+    started: Date.now(), retries: new Map(), ex: o.ex, level: 1, blocks: [], known: 0,
   };
   return true;
 }
@@ -163,7 +201,7 @@ export function renderSession(root) {
   const top = h('div', { class: 'session-top' },
     h('button', { class: 'icon-btn', 'aria-label': 'Quit lesson', onclick: quit }, icon('close')),
     h('div', { class: 'progress' }, h('div', { class: 'progress-bar', style: { width: `${progress}%` } })),
-    h('span', { class: 'session-count' }, `${s.pos + 1}/${s.items.length}`));
+    h('span', { class: 'session-count' }, s.kind === 'placement' ? `Level ${item.level}` : `${s.pos + 1}/${s.items.length}`));
   const body = h('div', { class: 'ex-body' });
   const foot = h('div', { class: 'ex-foot' });
   root.append(h('div', { class: 'session' }, top, body, foot));
@@ -188,6 +226,7 @@ function endSession() {
 
 function next(root) {
   session.pos++;
+  if (session.kind === 'placement' && session.pos >= session.items.length) placementAdvance();
   renderSession(root);
 }
 
@@ -197,9 +236,10 @@ function makeCtx(item, body, foot, root) {
   const st = getState();
   const prevState = st.cards[card.id] ? { ...st.cards[card.id] } : null;
   let graded = false;
+  const noSchedule = session.kind === 'practice' || !!item.practice;
 
   const applyGrade = (grade) => {
-    if (session.kind === 'practice' || item.practice) return;
+    if (noSchedule) return;
     st.cards[card.id] = schedule(prevState, grade, today());
     save();
   };
@@ -209,6 +249,7 @@ function makeCtx(item, body, foot, root) {
     if (graded) return;
     graded = true;
     const ok = ['correct', 'accent', 'typo', 'article'].includes(result.status);
+    item.ok = ok;
     const grade = opts.grade ?? (result.status === 'correct' || result.status === 'accent' ? GOOD : ok ? HARD : AGAIN);
     applyGrade(grade);
     const countNew = !!item.isNew && !item.practice && session.kind !== 'practice';
@@ -216,10 +257,11 @@ function makeCtx(item, body, foot, root) {
     session.answered++;
     if (ok) session.correct++;
     if (countNew && ok) session.newLearned++;
-    if (!ok && grade === AGAIN && session.kind !== 'practice') requeue(item);
+    if (!ok && grade === AGAIN && !noSchedule) requeue(item);
     play(ok ? 'good' : 'bad', settings().sounds);
     showFeedback(item, result, ok, foot, root, {
       override: !ok && opts.allowOverride !== false ? () => {
+        item.ok = true;
         applyGrade(GOOD);
         session.correct++;
         const d = dayStats();
@@ -241,11 +283,20 @@ function makeCtx(item, body, foot, root) {
       recordExercise({ correct: g !== AGAIN, isNew: false });
       session.answered++;
       if (g !== AGAIN) session.correct++;
-      if (g === AGAIN && session.kind !== 'practice') requeue(item);
+      if (g === AGAIN && !noSchedule) requeue(item);
       next(root);
     },
     skip: () => next(root),
     replaceWith: (ex) => { item.ex = ex; renderSession(root); },
+    markKnown: () => {
+      // Skip a new card you already know: it comes back once in 30 days to confirm.
+      const t = today();
+      st.cards[card.id] = { d: t + 30, i: 30, e: 265, r: 2, l: 0, t };
+      save();
+      session.items = session.items.filter((x, k) => k <= session.pos || x.card.id !== card.id);
+      session.known++;
+      next(root);
+    },
     prevState,
   };
 }
@@ -370,7 +421,7 @@ function showFeedback(item, result, ok, foot, root, { override }) {
     const id = card.src === 'es' ? card.esIds[0] : card.itIds[0];
     row.append(h('a', { class: 'btn link', href: tatoebaUrl(id), target: '_blank', rel: 'noopener' }, 'Source'));
   }
-  if (session.kind !== 'practice') {
+  if (session.kind !== 'practice' && !item.practice) {
     row.append(h('button', {
       class: 'btn link', onclick: (e) => {
         const st = getState();
@@ -404,6 +455,9 @@ const RENDER = {
       ctx.body.append(readAloud(c.it, 'it', { compact: true }));
     }
     ctx.foot.append(h('button', { class: 'btn primary block', onclick: () => ctx.skip() }, 'Continue'));
+    if (session.kind === 'learn') {
+      ctx.foot.append(h('button', { class: 'btn ghost block', onclick: () => ctx.markKnown() }, 'I already know this'));
+    }
     if (settings().autoplay) say(c.it, 'it');
   },
 
@@ -718,6 +772,10 @@ function micWidget(lang, targets, { onPass, onGiveUp, onOverride, compact = fals
 
 // ------------------------------------------------------------------ summary
 function renderSummary(root) {
+  if (session.kind === 'placement') {
+    renderPlacementResult(root);
+    return;
+  }
   const s = session;
   const secs = Math.round((Date.now() - s.started) / 1000);
   const acc = s.answered ? Math.round((s.correct / s.answered) * 100) : 100;
@@ -731,8 +789,35 @@ function renderSummary(root) {
     h('div', { class: 'summary-grid' },
       stat(String(s.answered), 'answers'), stat(`${acc}%`, 'accuracy'),
       stat(String(s.newLearned), 'new cards'), stat(`${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`, 'time')),
+    s.known ? h('p', { class: 'muted' }, `${s.known} card${s.known === 1 ? '' : 's'} marked as already known (you'll see ${s.known === 1 ? 'it' : 'them'} once more in a month).`) : null,
     moreDue ? h('button', { class: 'btn primary block', onclick: () => { const cb = onExit; session = null; if (startSession({ kind }, cb)) renderSession(root); else cb(); } }, 'Keep going') : null,
     h('button', { class: `btn ${moreDue ? 'ghost' : 'primary'} block`, onclick: endSession }, 'Done')));
+}
+
+function renderPlacementResult(root) {
+  const s = session;
+  const lvl = placedLevel(s.blocks);
+  const current = settings().startLevel;
+  const passedAll = s.blocks.length === 5 && s.blocks[4].passed;
+  play('done', settings().sounds);
+  const rows = s.blocks.map((b) => h('div', { class: `place-row ${b.passed ? 'pass' : 'fail'}` },
+    h('span', null, `Level ${b.level}`), h('span', null, `${b.right}/${b.total}`), h('b', null, b.passed ? '✓ passed' : '✗ not yet')));
+  const finish = (newLevel) => {
+    if (newLevel) updateSettings({ startLevel: newLevel });
+    endSession();
+  };
+  root.append(h('div', { class: 'summary' },
+    h('div', { class: 'summary-emoji' }, lvl > 1 ? '🚀' : '🌱'),
+    h('h2', null, `Your level: ${lvl}`),
+    h('p', { class: 'muted' }, passedAll
+      ? 'You passed every level! New cards will come from Level 5, the hardest.'
+      : lvl > 1 ? `New cards will start at Level ${lvl}. Easier levels are skipped.` : 'Level 1 is the right place to start.'),
+    h('div', { class: 'place-table' }, ...rows),
+    lvl !== current
+      ? [h('button', { class: 'btn primary block', onclick: () => finish(lvl) }, `Start at Level ${lvl}`),
+        h('button', { class: 'btn ghost block', onclick: () => finish(null) }, `Keep Level ${current}`)]
+      : h('button', { class: 'btn primary block', onclick: () => finish(null) }, 'Done'),
+    h('p', { class: 'muted small' }, 'You can change the starting level any time in Settings.')));
 }
 
 function stat(v, label) {

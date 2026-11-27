@@ -3,7 +3,7 @@ import { h, clear, icon, shuffle, dayNumber, dateKey, debounce, plural } from '.
 import { DB, deck, search, examples, tatoebaUrl, getCard } from './data.js';
 import { getState, settings, updateSettings, save, today, dayStats, streak, isFav, toggleFav, exportJSON, importJSON, resetAll, requestPersistence, DEFAULT_SETTINGS } from './store.js';
 import { isLearned, isMature } from './srs.js';
-import { dueCards, newCardsLeftToday, nextNewCards, practicePool, startSession, say, speakButtons, readAloud } from './session.js';
+import { dueCards, newCardsLeftToday, nextNewCards, practicePool, startSession, say, speakButtons, readAloud, PLACEMENT_PER_LEVEL } from './session.js';
 import { ttsSupported, voicesFor, bestVoice, onVoices, recognitionSupported, listenOnce } from './speech.js';
 import { FALSE_FRIENDS, TIPS } from './content.js';
 import { play } from './sound.js';
@@ -76,7 +76,8 @@ export function renderHome(root) {
       ...tot.map((n, i) => {
         const have = c.perLevel[dk][i];
         const pct = n ? Math.min(100, (have / n) * 100) : 0;
-        return h('div', { class: 'level-row' }, h('span', null, `Level ${i + 1}`),
+        const skipped = i + 1 < settings().startLevel;
+        return h('div', { class: `level-row ${skipped ? 'skipped' : ''}` }, h('span', null, `Level ${i + 1}`, skipped ? h('small', null, ' skipped') : null),
           h('div', { class: 'progress small' }, h('div', { class: 'progress-bar', style: { width: `${pct}%` } })),
           h('small', null, `${have}/${n}`));
       }));
@@ -93,6 +94,7 @@ export function renderHome(root) {
         h('div', null, h('b', null, String(newLeft)), ' new today'),
         h('div', { class: 'muted' }, 'Daily goal: ', String(s.dailyGoal), ' answers'))),
     startBtn,
+    levelCard(c.words + c.sents),
     due ? h('button', { class: 'btn ghost block', onclick: () => { if (startSession({ kind: 'flash' }, () => go('#/'))) go('#/session'); } }, 'Review with flashcards') : null,
     h('div', { class: 'card stats' },
       h('div', { class: 'stat' }, h('div', { class: 'stat-v' }, String(c.words)), h('div', { class: 'stat-l' }, 'words learned')),
@@ -101,6 +103,31 @@ export function renderHome(root) {
     h('div', { class: 'card' }, h('h3', null, 'This week'), bars),
     h('div', { class: 'card' }, lv('word', 'Words'), lv('sent', 'Sentences')),
   ));
+}
+
+// "Already know some Italian?": placement test + quick level jump.
+export function startPlacement() {
+  if (startSession({ kind: 'placement' }, () => go('#/'))) go('#/session');
+}
+
+function levelPicker(onPick) {
+  const cur = settings().startLevel;
+  return h('div', { class: 'level-pick', role: 'group', 'aria-label': 'Starting level' },
+    ...[1, 2, 3, 4, 5].map((n) => h('button', {
+      class: `level-chip ${n === cur ? 'on' : ''}`, 'aria-pressed': String(n === cur),
+      onclick: () => { updateSettings({ startLevel: n }); onPick(); },
+    }, String(n))));
+}
+
+function levelCard(learnedTotal) {
+  const cur = settings().startLevel;
+  // Shown to newcomers and to anyone who has moved the starting level.
+  if (learnedTotal >= 150 && cur === 1) return null;
+  return h('div', { class: 'card level-card' },
+    h('h3', null, cur > 1 ? `Starting at Level ${cur}` : 'Already know some Italian?'),
+    h('p', { class: 'muted small' }, `Take a quick placement test (${PLACEMENT_PER_LEVEL} questions per level) or pick where new cards start. Levels go from 1 (basics) to 5 (hardest).`),
+    h('button', { class: 'btn primary block', onclick: startPlacement }, 'Take placement test'),
+    h('div', { class: 'level-pick-row' }, h('span', { class: 'muted small' }, 'Start new cards at level:'), levelPicker(() => go('#/'))));
 }
 
 // ------------------------------------------------------------------ practice
@@ -330,6 +357,7 @@ export function renderSettings(root) {
       row('New cards per day', sel('newPerDay', [0, 5, 10, 15, 20, 30, 50].map((n) => [n, String(n)]), s.newPerDay, Number)),
       row('New cards from', sel('newFrom', [['both', 'Words + sentences'], ['words', 'Words only'], ['sentences', 'Sentences only']])),
       row('Start new cards at', sel('startLevel', [1, 2, 3, 4, 5].map((n) => [n, `Level ${n}`]), s.startLevel, Number), 'Skip easier cards if you already know some Italian'),
+      h('button', { class: 'btn ghost block', onclick: startPlacement }, '🚀 Take the placement test'),
       row('Cards per lesson', sel('lessonSize', [6, 8, 10, 12, 15, 20].map((n) => [n, String(n)]), s.lessonSize, Number)),
       row('Daily goal (answers)', sel('dailyGoal', [10, 20, 30, 50, 80, 120].map((n) => [n, String(n)]), s.dailyGoal, Number))),
     h('div', { class: 'card' }, h('h3', null, 'Exercises'),

@@ -12,6 +12,7 @@ A phone app for learning **Italian from Spanish** (or the other way round). It i
 
 | | |
 |---|---|
+| 🚀 **Skip ahead** | A placement test (6 questions per level) puts you at the right level. You can also pick the starting level (1–5) on the Home screen, or tap "I already know this" on any new card. |
 | 🧠 **Spaced repetition** | Every card is scheduled with an Anki-style SM-2 algorithm, so you review just before you would forget. |
 | 🎤 **Speaking** | Like Duolingo: tap the microphone, say the sentence, and get a match score with each word marked green or red. It uses your phone's built-in speech recognition. |
 | 🎧 **Listening** | Italian text-to-speech with a 🐢 slow button. Dictation exercises: "type / tap what you hear". |
