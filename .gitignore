@@ -1,0 +1,7 @@
+# raw source downloads (rebuild with scripts/build_data.py --download)
+raw
+raw/
+__pycache__/
+node_modules/
+*.pyc
+.DS_Store

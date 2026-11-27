@@ -1,0 +1,10 @@
+{
+  "name": "langcards",
+  "private": true,
+  "description": "Spanish-Italian flashcards PWA",
+  "scripts": {
+    "test": "node --test tests/unit/*.test.mjs",
+    "test:e2e": "node tests/e2e/run.cjs",
+    "stamp": "python3 scripts/stamp_version.py"
+  }
+}

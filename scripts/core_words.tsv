@@ -1,0 +1,392 @@
+# Hand-curated core vocabulary (Spanish -> Italian).
+# Columns: spanish <TAB> italian alternatives separated by | <TAB> part of speech <TAB> category <TAB> note (English, optional)
+# Nouns carry their definite article; [m]/[f] marks gender where the article is elided (l').
+# Every single-word entry is cross-checked against Tatoeba co-occurrence by build_data.py.
+hola	ciao|salve	phrase	greetings	"ciao" is informal; "salve" is a polite, neutral greeting
+adiós	arrivederci|ciao|addio	phrase	greetings	"addio" is a final farewell; day to day say "arrivederci" or "ciao"
+buenos días	buongiorno	phrase	greetings
+buenas tardes	buon pomeriggio|buonasera	phrase	greetings	Italians switch to "buonasera" from mid/late afternoon
+buenas noches	buonasera|buonanotte	phrase	greetings	"buonasera" to greet in the evening; "buonanotte" when leaving or going to bed
+hasta luego	a dopo|ci vediamo	phrase	greetings
+hasta mañana	a domani	phrase	greetings
+gracias	grazie	phrase	greetings
+muchas gracias	grazie mille|molte grazie	phrase	greetings
+por favor	per favore|per piacere	phrase	greetings
+de nada	prego|di niente	phrase	greetings
+perdón	scusa|scusi	phrase	greetings	"scusa" is informal (tu), "scusi" is formal (Lei)
+lo siento	mi dispiace	phrase	greetings
+sí	sì	adv	basics	note the accent: "si" without accent is a pronoun
+no	no	adv	basics	before a verb Italian uses "non": No sé → Non lo so
+vale	va bene|d'accordo	phrase	basics
+¿cómo estás?	come stai?	phrase	greetings	informal; formal: "Come sta?"
+me llamo	mi chiamo	phrase	greetings
+mucho gusto	piacere	phrase	greetings
+salud	salute|cin cin	phrase	greetings	as a toast Italians say "Salute!" or "Cin cin!"; after a sneeze: "Salute!"
+yo	io	pron	pronouns
+tú	tu	pron	pronouns
+él	lui	pron	pronouns
+ella	lei	pron	pronouns
+usted	Lei	pron	pronouns	formal "you": capital L, used with the 3rd person verb (Lei come sta?)
+nosotros	noi	pron	pronouns
+vosotros	voi	pron	pronouns
+ellos	loro	pron	pronouns
+ellas	loro	pron	pronouns
+ustedes	voi	pron	pronouns	everyday Italian uses "voi"; "Loro" is very formal
+qué	che|cosa|che cosa	pron	questions
+quién	chi	pron	questions
+dónde	dove	adv	questions
+cuándo	quando	adv	questions
+cómo	come	adv	questions
+por qué	perché	adv	questions
+cuánto	quanto	adv	questions
+cuál	quale	pron	questions
+y	e	conj	connectors	"ed" is often used before a word starting with e-
+o	o	conj	connectors
+pero	ma|però	conj	connectors
+porque	perché	conj	connectors
+si	se	conj	connectors	"if"
+que	che	conj	connectors
+aunque	anche se|sebbene	conj	connectors
+también	anche	adv	connectors
+tampoco	neanche|nemmeno	adv	connectors
+ni	né	conj	connectors
+a	a	prep	prepositions
+de	di|da	prep	prepositions	"di" for possession/material, "da" for origin ("vengo da Roma")
+en	in	prep	prepositions	cities take "a": "a Roma"
+con	con	prep	prepositions
+sin	senza	prep	prepositions
+para	per	prep	prepositions
+por	per	prep	prepositions
+entre	tra|fra	prep	prepositions
+sobre	su|sopra	prep	prepositions
+debajo de	sotto	prep	prepositions
+hasta	fino a	prep	prepositions
+desde	da	prep	prepositions
+hacia	verso	prep	prepositions
+contra	contro	prep	prepositions
+durante	durante	prep	prepositions
+según	secondo	prep	prepositions
+cerca de	vicino a	prep	prepositions
+lejos de	lontano da	prep	prepositions
+delante de	davanti a	prep	prepositions
+detrás de	dietro	prep	prepositions
+muy	molto	adv	adverbs
+mucho	molto	adv	adverbs
+poco	poco	adv	adverbs
+más	più	adv	adverbs
+menos	meno	adv	adverbs
+siempre	sempre	adv	adverbs
+nunca	mai	adv	adverbs	with a verb Italian needs "non": No lo veo nunca → Non lo vedo mai
+ya	già	adv	adverbs
+todavía	ancora	adv	adverbs
+aquí	qui|qua	adv	adverbs
+allí	lì|là	adv	adverbs
+ahora	adesso|ora	adv	adverbs
+hoy	oggi	adv	time
+ayer	ieri	adv	time
+mañana	domani|la mattina	adv	time	"mañana" (tomorrow) = domani; "la mañana" (the morning) = la mattina
+bien	bene	adv	adverbs
+mal	male	adv	adverbs
+antes	prima	adv	adverbs
+después	dopo	adv	adverbs
+pronto	presto	adv	adverbs	false friend: Italian "pronto" means "ready"
+tarde	tardi|il pomeriggio	adv	time	"tarde" (late) = tardi; "la tarde" (the afternoon) = il pomeriggio
+temprano	presto	adv	adverbs
+casi	quasi	adv	adverbs
+quizás	forse	adv	adverbs
+tal vez	forse	adv	adverbs
+despacio	piano|lentamente	adv	adverbs
+juntos	insieme	adv	adverbs
+otra vez	di nuovo|ancora	adv	adverbs
+solo	solo|soltanto	adv	adverbs
+cero	zero	num	numbers
+uno	uno	num	numbers
+dos	due	num	numbers
+tres	tre	num	numbers
+cuatro	quattro	num	numbers
+cinco	cinque	num	numbers
+seis	sei	num	numbers
+siete	sette	num	numbers
+ocho	otto	num	numbers
+nueve	nove	num	numbers
+diez	dieci	num	numbers
+once	undici	num	numbers
+doce	dodici	num	numbers
+trece	tredici	num	numbers
+catorce	quattordici	num	numbers
+quince	quindici	num	numbers
+dieciséis	sedici	num	numbers
+diecisiete	diciassette	num	numbers
+dieciocho	diciotto	num	numbers
+diecinueve	diciannove	num	numbers
+veinte	venti	num	numbers
+treinta	trenta	num	numbers
+cuarenta	quaranta	num	numbers
+cincuenta	cinquanta	num	numbers
+sesenta	sessanta	num	numbers
+setenta	settanta	num	numbers
+ochenta	ottanta	num	numbers
+noventa	novanta	num	numbers
+cien	cento	num	numbers
+mil	mille	num	numbers
+un millón	un milione	num	numbers
+primero	primo	adj	numbers
+segundo	secondo	adj	numbers
+tercero	terzo	adj	numbers
+el lunes	il lunedì	n	days
+el martes	il martedì	n	days
+el miércoles	il mercoledì	n	days
+el jueves	il giovedì	n	days
+el viernes	il venerdì	n	days
+el sábado	il sabato	n	days
+el domingo	la domenica	n	days	the only feminine day in Italian
+enero	gennaio	n	months
+febrero	febbraio	n	months
+marzo	marzo	n	months
+abril	aprile	n	months
+mayo	maggio	n	months
+junio	giugno	n	months
+julio	luglio	n	months
+agosto	agosto	n	months
+septiembre	settembre	n	months
+octubre	ottobre	n	months
+noviembre	novembre	n	months
+diciembre	dicembre	n	months
+el día	il giorno	n	time
+la semana	la settimana	n	time
+el mes	il mese	n	time
+el año	l'anno[m]	n	time
+la hora	l'ora[f]	n	time
+el minuto	il minuto	n	time
+la noche	la notte	n	time
+rojo	rosso	adj	colours
+azul	blu|azzurro	adj	colours	"azzurro" is light/sky blue
+verde	verde	adj	colours
+amarillo	giallo	adj	colours
+negro	nero	adj	colours
+blanco	bianco	adj	colours
+gris	grigio	adj	colours
+marrón	marrone	adj	colours
+rosa	rosa	adj	colours
+morado	viola	adj	colours
+el padre	il padre	n	family
+la madre	la madre	n	family
+los padres	i genitori	n	family	Italian "i padri" means "the fathers"
+el hermano	il fratello	n	family
+la hermana	la sorella	n	family
+el hijo	il figlio	n	family
+la hija	la figlia	n	family
+el abuelo	il nonno	n	family
+la abuela	la nonna	n	family
+el tío	lo zio	n	family
+la tía	la zia	n	family
+el primo	il cugino	n	family	false friend: Italian "primo" means "first"
+la prima	la cugina	n	family
+el marido	il marito	n	family
+la esposa	la moglie	n	family
+el novio	il fidanzato|il ragazzo	n	family
+la novia	la fidanzata|la ragazza	n	family
+el amigo	l'amico[m]	n	family
+la amiga	l'amica[f]	n	family
+ser	essere	v	verbs
+estar	essere|stare	v	verbs	"Estoy cansado" → "Sono stanco"; "¿Cómo estás?" → "Come stai?"; "Estoy comiendo" → "Sto mangiando"
+tener	avere	v	verbs	"Tengo hambre" → "Ho fame". False friend: "tenere" = to hold/keep
+haber	avere|esserci	v	verbs	as an auxiliary: avere (or essere); "hay" = "c'è / ci sono"
+hacer	fare	v	verbs
+ir	andare	v	verbs
+venir	venire	v	verbs
+decir	dire	v	verbs
+poder	potere	v	verbs
+querer	volere	v	verbs	"te quiero" → "ti voglio bene" (affection) or "ti amo" (romantic)
+saber	sapere	v	verbs
+conocer	conoscere	v	verbs
+ver	vedere	v	verbs
+dar	dare	v	verbs
+hablar	parlare	v	verbs
+comer	mangiare	v	verbs
+beber	bere	v	verbs
+vivir	vivere|abitare	v	verbs	"abitare" for where you live: "Abito a Roma"
+trabajar	lavorare	v	verbs
+dormir	dormire	v	verbs
+salir	uscire	v	verbs	false friend: Italian "salire" = to go up
+llegar	arrivare	v	verbs
+entrar	entrare	v	verbs
+volver	tornare	v	verbs
+llamar	chiamare	v	verbs
+llamarse	chiamarsi	v	verbs
+gustar	piacere	v	verbs	"Me gusta el café" → "Mi piace il caffè"
+necesitar	avere bisogno di	v	verbs	"Necesito ayuda" → "Ho bisogno di aiuto"
+pensar	pensare	v	verbs
+creer	credere	v	verbs
+entender	capire	v	verbs
+escribir	scrivere	v	verbs
+leer	leggere	v	verbs
+abrir	aprire	v	verbs
+cerrar	chiudere	v	verbs
+comprar	comprare	v	verbs
+pagar	pagare	v	verbs
+esperar	aspettare|sperare	v	verbs	"aspettare" = to wait, "sperare" = to hope
+buscar	cercare	v	verbs
+encontrar	trovare	v	verbs
+aprender	imparare	v	verbs
+enseñar	insegnare	v	verbs
+jugar	giocare	v	verbs
+tomar	prendere	v	verbs	"tomar un café" → "prendere un caffè"
+poner	mettere	v	verbs
+dejar	lasciare	v	verbs
+empezar	cominciare|iniziare	v	verbs
+terminar	finire	v	verbs
+ayudar	aiutare	v	verbs
+preguntar	chiedere|domandare	v	verbs
+responder	rispondere	v	verbs
+contestar	rispondere	v	verbs	false friend: Italian "contestare" = to dispute
+subir	salire	v	verbs	false friend: Italian "subire" = to suffer/undergo
+bajar	scendere	v	verbs
+olvidar	dimenticare	v	verbs
+recordar	ricordare	v	verbs
+perder	perdere	v	verbs
+ganar	vincere|guadagnare	v	verbs	"vincere" = to win, "guadagnare" = to earn
+cocinar	cucinare	v	verbs
+viajar	viaggiare	v	verbs
+correr	correre	v	verbs
+caminar	camminare	v	verbs
+nadar	nuotare	v	verbs
+cantar	cantare	v	verbs
+bailar	ballare	v	verbs
+mirar	guardare	v	verbs
+escuchar	ascoltare	v	verbs
+oír	sentire	v	verbs
+vender	vendere	v	verbs
+llevar	portare	v	verbs
+traer	portare	v	verbs
+quedarse	restare|rimanere	v	verbs
+deber	dovere	v	verbs
+parecer	sembrare	v	verbs
+morir	morire	v	verbs
+nacer	nascere	v	verbs
+amar	amare	v	verbs
+sentarse	sedersi	v	verbs
+levantarse	alzarsi	v	verbs
+despertarse	svegliarsi	v	verbs
+acostarse	andare a letto	v	verbs	false friend: Italian "accostarsi" = to approach
+lavar	lavare	v	verbs
+limpiar	pulire	v	verbs
+cambiar	cambiare	v	verbs
+bueno	buono|bravo	adj	adjectives	"buono" = good/tasty, "bravo" = good at something
+malo	cattivo	adj	adjectives
+grande	grande	adj	adjectives
+pequeño	piccolo	adj	adjectives
+nuevo	nuovo	adj	adjectives
+viejo	vecchio	adj	adjectives
+joven	giovane	adj	adjectives
+largo	lungo	adj	adjectives	false friend: Italian "largo" = wide
+ancho	largo	adj	adjectives
+corto	corto	adj	adjectives
+alto	alto	adj	adjectives
+bajo	basso	adj	adjectives
+bonito	bello|carino	adj	adjectives
+feo	brutto	adj	adjectives
+caro	caro	adj	adjectives
+barato	economico	adj	adjectives
+fácil	facile	adj	adjectives
+difícil	difficile	adj	adjectives
+feliz	felice	adj	adjectives
+triste	triste	adj	adjectives
+cansado	stanco	adj	adjectives
+enfermo	malato	adj	adjectives
+lleno	pieno	adj	adjectives
+vacío	vuoto	adj	adjectives
+caliente	caldo	adj	adjectives	false friend: Spanish "caldo" = broth (Italian "brodo")
+frío	freddo	adj	adjectives
+rápido	veloce	adj	adjectives
+lento	lento	adj	adjectives
+todo	tutto	adj	adjectives
+otro	altro	adj	adjectives
+mismo	stesso	adj	adjectives
+cada	ogni	adj	adjectives
+algo	qualcosa	pron	pronouns
+nada	niente|nulla	pron	pronouns
+alguien	qualcuno	pron	pronouns
+nadie	nessuno	pron	pronouns
+la casa	la casa	n	nouns
+el agua	l'acqua[f]	n	nouns	"agua" is feminine in Spanish too: "el agua fría"
+la comida	il cibo	n	nouns
+el pan	il pane	n	nouns
+la leche	il latte	n	nouns	gender differs: la leche → il latte
+el café	il caffè	n	nouns
+el vino	il vino	n	nouns
+la cerveza	la birra	n	nouns
+el dinero	i soldi|il denaro	n	nouns	"i soldi" is plural in Italian
+el trabajo	il lavoro	n	nouns
+la escuela	la scuola	n	nouns
+la ciudad	la città	n	nouns
+la calle	la strada|la via	n	nouns
+el coche	la macchina|l'auto[f]	n	nouns	gender differs: el coche → la macchina
+el tren	il treno	n	nouns
+el libro	il libro	n	nouns
+el tiempo	il tempo	n	nouns	both "time" and "weather", as in Spanish
+el hombre	l'uomo[m]	n	nouns	plural: gli uomini
+la mujer	la donna	n	nouns
+el niño	il bambino	n	nouns
+la niña	la bambina	n	nouns
+el perro	il cane	n	nouns
+el gato	il gatto	n	nouns
+la puerta	la porta	n	nouns
+la mesa	il tavolo	n	nouns	gender differs: la mesa → il tavolo
+la silla	la sedia	n	nouns
+la cama	il letto	n	nouns	gender differs: la cama → il letto
+la ventana	la finestra	n	nouns
+la habitación	la camera|la stanza	n	nouns	false friend: Italian "abitazione" = dwelling
+el baño	il bagno	n	nouns
+la cocina	la cucina	n	nouns
+el nombre	il nome	n	nouns
+el amor	l'amore[m]	n	nouns
+la vida	la vita	n	nouns
+el mundo	il mondo	n	nouns
+el país	il paese	n	nouns
+la playa	la spiaggia	n	nouns
+el mar	il mare	n	nouns
+el sol	il sole	n	nouns
+la luna	la luna	n	nouns
+el cielo	il cielo	n	nouns
+el árbol	l'albero[m]	n	nouns
+la flor	il fiore	n	nouns	gender differs: la flor → il fiore
+la fruta	la frutta	n	nouns
+la manzana	la mela	n	nouns
+la naranja	l'arancia[f]	n	nouns	the colour orange is "arancione"
+la sal	il sale	n	nouns	gender differs: la sal → il sale
+el azúcar	lo zucchero	n	nouns
+el huevo	l'uovo[m]	n	nouns	irregular plural: le uova
+la carne	la carne	n	nouns
+el pescado	il pesce	n	nouns	Italian "pesce" is both the live fish (pez) and the food (pescado)
+el queso	il formaggio	n	nouns
+el desayuno	la colazione	n	nouns	gender differs: el desayuno → la colazione
+el almuerzo	il pranzo	n	nouns
+la cena	la cena	n	nouns
+la cuenta	il conto	n	nouns	gender differs: la cuenta → il conto
+el problema	il problema	n	nouns
+la mano	la mano	n	nouns	plural: le mani
+la cabeza	la testa	n	nouns
+el ojo	l'occhio[m]	n	nouns
+la boca	la bocca	n	nouns
+el pie	il piede	n	nouns
+el corazón	il cuore	n	nouns
+la nariz	il naso	n	nouns	gender differs: la nariz → il naso
+el diente	il dente	n	nouns
+el puente	il ponte	n	nouns
+el color	il colore	n	nouns
+el dolor	il dolore	n	nouns
+el viaje	il viaggio	n	nouns
+el hospital	l'ospedale[m]	n	nouns
+el médico	il medico|il dottore	n	nouns
+la tienda	il negozio	n	nouns	false friend: Italian "tenda" = tent/curtain
+el mercado	il mercato	n	nouns
+la iglesia	la chiesa	n	nouns
+la estación	la stazione	n	nouns
+el aeropuerto	l'aeroporto[m]	n	nouns
+el billete	il biglietto	n	nouns
+el teléfono	il telefono	n	nouns
+la pregunta	la domanda	n	nouns
+la respuesta	la risposta	n	nouns
+la palabra	la parola	n	nouns
+el idioma	la lingua	n	nouns	gender differs: el idioma → la lingua
